@@ -1,4 +1,5 @@
 ﻿using ASPCoreWebAPI.Models;
+using ASPCoreWebAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json; //it is no longer needed, as we are not using Json.Serialize, Ok() uses System.Text.Json for serialization
 using System.Data;
@@ -16,40 +17,24 @@ namespace ASPCoreWebAPI.Controllers
     public class EmployeeController : ControllerBase
     {
 
-        public readonly IConfiguration _configuration;
-        public EmployeeController(IConfiguration configuration)
+        private readonly IEmployeeRepository _employeeRepository;
+
+        public EmployeeController(IEmployeeRepository employeeRepository)
         {
-            _configuration = configuration;
+            _employeeRepository = employeeRepository;
         }
         [HttpGet("GetAllEmployees")]
         //[Route("GetAllEmployees")]
         //[Obsolete]
         public ActionResult<List<Employee>> GetEmployees()
         {
-            using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString()); //using keyword gaurantees that Dispose() will be called even if sql connection failed!! So, the database can be accissible for others also.
-            using SqlDataAdapter sqlData = new SqlDataAdapter("Select * FROM EmployeeInfo",sqlConnection);
-            DataTable dt = new DataTable();
-            sqlData.Fill(dt);
+            //Added Dependency Injection,  Now controller don't need to handle SQL connection, running queries, etc. 
+            //EmployeeController now only has one job, which is to handle http request and response.
+            var employees = _employeeRepository.GetEmployees();
 
-
-            List<Employee> empList = new List<Employee>();
-            //Response response = new Response(); //using this for editing response messages, but now we are using NotFound()
-
-            if (dt.Rows.Count > 0)
+            if (employees.Count > 0)
             {
-                for(int i = 0; i < dt.Rows.Count; i++)
-                {
-                    Employee employee = new Employee();
-                    employee.Name = Convert.ToString(dt.Rows[i]["Name"]);
-                    employee.Age = Convert.ToInt32(dt.Rows[i]["Age"]);
-                    employee.Salary = Convert.ToDouble(dt.Rows[i]["Salary"]);
-
-                    empList.Add(employee);
-                }
-            }
-            if (empList.Count > 0)
-            {
-                return Ok(empList); //creates object of OkObjectResult, which will give 200Ok statusCode, and uses System.Text.Json for serialization
+                return Ok(employees); //creates object of OkObjectResult, which will give 200Ok statusCode, and uses System.Text.Json for serialization
             }
             else
             {
