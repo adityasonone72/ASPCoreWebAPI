@@ -1,0 +1,35 @@
+Version 1  ✔ Initial Project (Done)
+
+Version 2
+├── Better Folder Structure
+├── IActionResult
+├── Proper HTTP Status Codes
+
+Version 3
+├── GET by Id
+├── POST
+├── PUT
+├── DELETE
+
+Version 4
+├── Repository Pattern
+├── Dependency Injection
+
+Version 5
+├── Async ADO.NET
+├── Exception Handling
+├── Logging
+
+Version 6
+├── Swagger Documentation
+├── Validation
+
+Version 7
+├── Entity Framework Core
+
+Version 8
+├── JWT Authentication
+├── Authorization
+
+Version 9
+├── Deployment
