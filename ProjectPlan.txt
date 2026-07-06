@@ -1,19 +1,19 @@
 Version 1  ✔ Initial Project (Done)
 
-Version 2
+Version 2  ✔ 
 ├── Better Folder Structure
 ├── IActionResult
-├── Proper HTTP Status Codes
+├── Proper HTTP Status Codes (Done)
 
 Version 3
-├── GET by Id
+├── GET by Id ✔ 
 ├── POST
 ├── PUT
 ├── DELETE
 
-Version 4
+Version 4  ✔ 
 ├── Repository Pattern
-├── Dependency Injection
+├── Dependency Injection (Done)
 
 Version 5
 ├── Async ADO.NET

@@ -23,7 +23,7 @@ namespace ASPCoreWebAPI.Controllers
         {
             _employeeRepository = employeeRepository;
         }
-        [HttpGet("GetAllEmployees")]
+        [HttpGet]
         //[Route("GetAllEmployees")]
         //[Obsolete]
         public ActionResult<List<Employee>> GetEmployees()
@@ -43,5 +43,19 @@ namespace ASPCoreWebAPI.Controllers
 
             //return View();
         }
+        [HttpGet("{Id}")]
+        public ActionResult<Employee> GetEmployeeById(int Id)
+        {
+            Employee? result = _employeeRepository.GetEmployeeById(Id);
+
+            if (result == null) {
+                return NotFound("Employee Record Not found for this Id");
+            }
+            else
+            {
+                return Ok(result);
+            }
+        }
+
     }
 }

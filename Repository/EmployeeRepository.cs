@@ -12,7 +12,7 @@ namespace ASPCoreWebAPI.Repository
         {
             _configuration = configuration;
         }
-        [HttpGet("GetAllEmployees")]
+        [HttpGet]
         //[Route("GetAllEmployees")]
         //[Obsolete]
         public List<Employee> GetEmployees()
@@ -34,12 +34,35 @@ namespace ASPCoreWebAPI.Repository
                     employee.Name = Convert.ToString(dt.Rows[i]["Name"]);
                     employee.Age = Convert.ToInt32(dt.Rows[i]["Age"]);
                     employee.Salary = Convert.ToDouble(dt.Rows[i]["Salary"]);
+                    employee.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
 
                     empList.Add(employee);
                 }
             }
 
             return empList;
+        }
+        [HttpGet("{Id}")]
+        public Employee? GetEmployeeById(int id) {
+            using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
+            using SqlDataAdapter sqlDataAdapter = new SqlDataAdapter("Select * FROM EmployeeInfo where Id = @Id",sqlConnection);
+
+            sqlDataAdapter.SelectCommand.Parameters.AddWithValue("@Id", id);
+            DataTable dt = new DataTable();
+
+            sqlDataAdapter.Fill(dt);
+
+            if (dt.Rows.Count > 0)
+            {
+                Employee emp = new Employee();
+                DataRow row = dt.Rows[0];
+                emp.Name = Convert.ToString(row["Name"]);
+                emp.Age = Convert.ToInt32(row["Age"]);
+                emp.Salary = Convert.ToDouble(row["Salary"]);
+                emp.Id = Convert.ToInt32(row["Id"]);
+                return emp;
+            }
+            return null;
         }
     }
 }

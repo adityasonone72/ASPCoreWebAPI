@@ -5,5 +5,7 @@ namespace ASPCoreWebAPI.Repository
     public interface IEmployeeRepository
     {
         List<Employee> GetEmployees();
+
+        Employee? GetEmployeeById(int Id);
     }
 }
