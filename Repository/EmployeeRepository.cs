@@ -45,6 +45,7 @@ namespace ASPCoreWebAPI.Repository
         [HttpGet("{Id}")]
         public Employee? GetEmployeeById(int id) {
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
+            sqlConnection.Open();
             using SqlDataAdapter sqlDataAdapter = new SqlDataAdapter("Select * FROM EmployeeInfo where Id = @Id",sqlConnection);
 
             sqlDataAdapter.SelectCommand.Parameters.AddWithValue("@Id", id);
@@ -63,6 +64,23 @@ namespace ASPCoreWebAPI.Repository
                 return emp;
             }
             return null;
+        }
+
+        [HttpPost]
+        public Employee AddEmployee(Employee emp) {
+            using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
+            using SqlCommand sqlCommand = new SqlCommand("Insert into EmployeeInfo(Name,Age,Salary) VALUES(@Name,@Age,@Salary); SELECT SCOPE_IDENTITY();", sqlConnection);
+
+            sqlConnection.Open();
+
+            sqlCommand.Parameters.AddWithValue("@Name", emp.Name);
+            sqlCommand.Parameters.AddWithValue("@Age", emp.Age);
+            sqlCommand.Parameters.AddWithValue("@Salary", emp.Salary);
+
+            //SELECT SCOPE_IDENTITY();
+            int generatedId = Convert.ToInt32(sqlCommand.ExecuteScalar());
+            emp.Id = generatedId;
+            return emp;
         }
     }
 }

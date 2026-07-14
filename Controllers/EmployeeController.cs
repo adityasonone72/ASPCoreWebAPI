@@ -56,6 +56,18 @@ namespace ASPCoreWebAPI.Controllers
                 return Ok(result);
             }
         }
+        [HttpPost]
+        public ActionResult<Employee> AddEmployee(Employee employee)
+        {
+            var result = _employeeRepository.AddEmployee(employee);
 
+            if (result == null) {
+                return BadRequest("Insertion falied");
+            }
+            else
+            {
+                return Ok(result);
+            }
+        }
     }
 }
