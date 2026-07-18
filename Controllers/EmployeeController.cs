@@ -11,6 +11,10 @@ namespace ASPCoreWebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
+    /*[ApiController] enables API-specific behaviors. One of them is automatic model validation. 
+     * If the model is invalid, ASP.NET Core automatically returns a 400 Bad Request response before the controller action executes. 
+     * Without [ApiController], validation errors are stored in ModelState, and the developer must manually check ModelState.IsValid."*/
+
     //since we are using webapi, we don't need whole Controller, since WEBAPI never returns View()
     //so, we are using ControllerBase, as we don't need additional MVC views functionality.
     //Controller = ControllerBase + MVC View support.

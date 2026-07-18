@@ -30,7 +30,7 @@ namespace ASPCoreWebAPI.Repository
                     Employee employee = new Employee();
                     employee.Name = Convert.ToString(dt.Rows[i]["Name"]);
                     employee.Age = Convert.ToInt32(dt.Rows[i]["Age"]);
-                    employee.Salary = Convert.ToDouble(dt.Rows[i]["Salary"]);
+                    employee.Salary = Convert.ToDecimal(dt.Rows[i]["Salary"]);
                     employee.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
 
                     empList.Add(employee);
@@ -55,7 +55,7 @@ namespace ASPCoreWebAPI.Repository
                 DataRow row = dt.Rows[0];
                 emp.Name = Convert.ToString(row["Name"]);
                 emp.Age = Convert.ToInt32(row["Age"]);
-                emp.Salary = Convert.ToDouble(row["Salary"]);
+                emp.Salary = Convert.ToDecimal(row["Salary"]);
                 emp.Id = Convert.ToInt32(row["Id"]);
                 return emp;
             }
