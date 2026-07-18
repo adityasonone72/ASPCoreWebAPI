@@ -85,5 +85,34 @@ namespace ASPCoreWebAPI.Repository
             }
             return null;
         }
+
+        public bool UpdateEmployee(Employee emp) {
+            using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
+            using SqlCommand sqlCommand = new SqlCommand("UPDATE EmployeeInfo SET Name = @Name, Age = @Age, Salary = @Salary WHERE Id = @Id", sqlConnection); 
+
+            sqlCommand.Parameters.Add("@Name", SqlDbType.VarChar).Value = emp.Name;
+            sqlCommand.Parameters.Add("@Age", SqlDbType.Int).Value = emp.Age;
+            sqlCommand.Parameters.Add("@Salary", SqlDbType.Decimal).Value = emp.Salary;
+            sqlCommand.Parameters.Add("@Id", SqlDbType.Int).Value = emp.Id;
+
+            sqlConnection.Open();
+
+            int rowAffected = sqlCommand.ExecuteNonQuery();
+
+            return rowAffected == 1;
+        }
+
+        public bool DeleteEmployee(int Id) {
+            using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
+            using SqlCommand sqlCommand = new SqlCommand("DELETE FROM EmployeeInfo WHERE Id = @Id", sqlConnection);
+
+            sqlCommand.Parameters.Add("@Id", SqlDbType.Int).Value = Id;
+
+            sqlConnection.Open();
+
+            int rowAffected = sqlCommand.ExecuteNonQuery();
+
+            return rowAffected == 1;
+        }
     }
 }

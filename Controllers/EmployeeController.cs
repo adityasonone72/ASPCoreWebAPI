@@ -73,5 +73,32 @@ namespace ASPCoreWebAPI.Controllers
                 return Ok(result);
             }
         }
+
+        [HttpPut("{Id}")]
+        public IActionResult UpdateEmployee(int Id, Employee employee) { 
+            if(Id != employee.Id)
+            {
+                return BadRequest();
+            }
+
+            bool IsUpdateComplete = _employeeRepository.UpdateEmployee(employee);
+
+            if (!IsUpdateComplete) 
+            { 
+                return NotFound();
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{Id}")]
+        public IActionResult DeleteEmployee(int Id) { 
+            bool isDeleted = _employeeRepository.DeleteEmployee(Id);
+
+            if (isDeleted)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
     }
 }
