@@ -7,7 +7,7 @@ Version 2  ✔
 
 Version 3         status code
 ├── GET by Id ✔  200 Ok
-├── POST         201 Created
+├── POST   ✔     201 Created
 ├── PUT          204 No content (or 200 if we are returning that updated record)
 ├── DELETE       204 No content
 

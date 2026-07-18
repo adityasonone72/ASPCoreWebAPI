@@ -12,9 +12,6 @@ namespace ASPCoreWebAPI.Repository
         {
             _configuration = configuration;
         }
-        [HttpGet]
-        //[Route("GetAllEmployees")]
-        //[Obsolete]
         public List<Employee> GetEmployees()
         {
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString()); //using keyword gaurantees that Dispose() will be called even if sql connection failed!! So, the database can be accissible for others also.
@@ -42,7 +39,6 @@ namespace ASPCoreWebAPI.Repository
 
             return empList;
         }
-        [HttpGet("{Id}")]
         public Employee? GetEmployeeById(int id) {
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
             sqlConnection.Open();
@@ -66,21 +62,28 @@ namespace ASPCoreWebAPI.Repository
             return null;
         }
 
-        [HttpPost]
         public Employee AddEmployee(Employee emp) {
+            // using keyword dispose the connection if any exception is occured while CRUD.
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
             using SqlCommand sqlCommand = new SqlCommand("Insert into EmployeeInfo(Name,Age,Salary) VALUES(@Name,@Age,@Salary); SELECT SCOPE_IDENTITY();", sqlConnection);
 
             sqlConnection.Open();
 
             sqlCommand.Parameters.AddWithValue("@Name", emp.Name);
-            sqlCommand.Parameters.AddWithValue("@Age", emp.Age);
+            //sqlCommand.Parameters.AddWithValue("@Age", emp.Age); //AddWithValue guesses datatype automatically. Might fail in some cases, that's why using Add is a best practice.
+            sqlCommand.Parameters.Add("@Age", SqlDbType.Int).Value = emp.Age;
             sqlCommand.Parameters.AddWithValue("@Salary", emp.Salary);
 
-            //SELECT SCOPE_IDENTITY();
-            int generatedId = Convert.ToInt32(sqlCommand.ExecuteScalar());
-            emp.Id = generatedId;
-            return emp;
+            try
+            {
+                int generatedId = Convert.ToInt32(sqlCommand.ExecuteScalar());
+                emp.Id = generatedId;
+                return emp;
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+            return null;
         }
     }
 }
