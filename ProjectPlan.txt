@@ -15,10 +15,11 @@ Version 4  ✔
 ├── Repository Pattern
 ├── Dependency Injection (Done)
 
-Version 5
-├── Async ADO.NET
-├── Exception Handling
+Version 5 - Production Ready API
+├── Async ADO.NET ✔
+├── Global Exception Handling
 ├── Logging
+├── CancellationToken
 
 Version 6
 ├── Swagger Documentation

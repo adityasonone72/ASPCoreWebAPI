@@ -5,6 +5,7 @@ using Newtonsoft.Json; //it is no longer needed, as we are not using Json.Serial
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace ASPCoreWebAPI.Controllers
 {
@@ -30,58 +31,49 @@ namespace ASPCoreWebAPI.Controllers
         [HttpGet]
         //[Route("GetAllEmployees")]
         //[Obsolete]
-        public ActionResult<List<Employee>> GetEmployees()
+        public async Task<ActionResult<List<Employee>>> GetEmployees()
         {
             //Added Dependency Injection,  Now controller don't need to handle SQL connection, running queries, etc. 
             //EmployeeController now only has one job, which is to handle http request and response.
-            var employees = _employeeRepository.GetEmployees();
 
-            if (employees.Count > 0)
-            {
-                return Ok(employees); //creates object of OkObjectResult, which will give 200Ok statusCode, and uses System.Text.Json for serialization
-            }
-            else
-            {
-                return NotFound("No data found!!");
-            }
+            //Task<List<Employee>> employees = _employeeRepository.GetEmployees();
 
+            List<Employee> result = await _employeeRepository.GetEmployees();
+            return Ok(result); //creates object of OkObjectResult, which will give 200Ok statusCode, and uses System.Text.Json for 
             //return View();
         }
         [HttpGet("{Id}")]
-        public ActionResult<Employee> GetEmployeeById(int Id)
+        public async Task<ActionResult<Employee?>> GetEmployeeById(int Id)
         {
-            Employee? result = _employeeRepository.GetEmployeeById(Id);
+            var result = await _employeeRepository.GetEmployeeById(Id);
 
             if (result == null) {
                 return NotFound("Employee Record Not found for this Id");
             }
-            else
-            {
-                return Ok(result);
-            }
+            return Ok(result);
         }
         [HttpPost]
-        public ActionResult<Employee> AddEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> AddEmployee(Employee employee)
         {
-            var result = _employeeRepository.AddEmployee(employee);
+            var result = await _employeeRepository.AddEmployee(employee);
 
-            if (result == null) {
-                return BadRequest("Insertion falied");
-            }
-            else
-            {
+            //if (result == null) { //it will never be  null, even if insertion failed.
+            //    return BadRequest("Insertion falied");
+            //}
+            //else
+            //{
                 return Ok(result);
-            }
+            //}
         }
 
         [HttpPut("{Id}")]
-        public IActionResult UpdateEmployee(int Id, Employee employee) { 
+        public async Task<IActionResult> UpdateEmployee(int Id, Employee employee) { 
             if(Id != employee.Id)
             {
                 return BadRequest();
             }
 
-            bool IsUpdateComplete = _employeeRepository.UpdateEmployee(employee);
+            bool IsUpdateComplete = await _employeeRepository.UpdateEmployee(employee);
 
             if (!IsUpdateComplete) 
             { 
@@ -91,8 +83,8 @@ namespace ASPCoreWebAPI.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public IActionResult DeleteEmployee(int Id) { 
-            bool isDeleted = _employeeRepository.DeleteEmployee(Id);
+        public async Task<IActionResult> DeleteEmployee(int Id) { 
+            bool isDeleted = await _employeeRepository.DeleteEmployee(Id);
 
             if (isDeleted)
             {
