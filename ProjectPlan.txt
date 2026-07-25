@@ -17,8 +17,8 @@ Version 4  ✔
 
 Version 5 - Production Ready API
 ├── Async ADO.NET ✔
-├── Global Exception Handling
-├── Logging
+├── Global Exception Handling ✔
+├── Logging ✔
 ├── CancellationToken
 
 Version 6
