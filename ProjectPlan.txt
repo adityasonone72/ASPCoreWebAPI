@@ -19,7 +19,7 @@ Version 5 - Production Ready API
 ├── Async ADO.NET ✔
 ├── Global Exception Handling ✔
 ├── Logging ✔
-├── CancellationToken
+├── CancellationToken ✔
 
 Version 6
 ├── Swagger Documentation
