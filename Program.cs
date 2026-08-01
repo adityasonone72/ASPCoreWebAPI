@@ -1,3 +1,4 @@
+using ASPCoreWebAPI.Middleware;
 using ASPCoreWebAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

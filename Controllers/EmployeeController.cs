@@ -31,21 +31,21 @@ namespace ASPCoreWebAPI.Controllers
         [HttpGet]
         //[Route("GetAllEmployees")]
         //[Obsolete]
-        public async Task<ActionResult<List<Employee>>> GetEmployees()
+        public async Task<ActionResult<List<Employee>>> GetEmployees(CancellationToken cancellationToken)
         {
             //Added Dependency Injection,  Now controller don't need to handle SQL connection, running queries, etc. 
             //EmployeeController now only has one job, which is to handle http request and response.
 
             //Task<List<Employee>> employees = _employeeRepository.GetEmployees();
 
-            List<Employee> result = await _employeeRepository.GetEmployees();
+            List<Employee> result = await _employeeRepository.GetEmployees(cancellationToken);
             return Ok(result); //creates object of OkObjectResult, which will give 200Ok statusCode, and uses System.Text.Json for 
             //return View();
         }
         [HttpGet("{Id}")]
-        public async Task<ActionResult<Employee?>> GetEmployeeById(int Id)
+        public async Task<ActionResult<Employee?>> GetEmployeeById(int Id, CancellationToken cancellationToken)
         {
-            var result = await _employeeRepository.GetEmployeeById(Id);
+            var result = await _employeeRepository.GetEmployeeById(Id, cancellationToken);
 
             if (result == null) {
                 return NotFound("Employee Record Not found for this Id");
@@ -53,9 +53,9 @@ namespace ASPCoreWebAPI.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<ActionResult<Employee>> AddEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> AddEmployee(Employee employee, CancellationToken cancellationToken)
         {
-            var result = await _employeeRepository.AddEmployee(employee);
+            var result = await _employeeRepository.AddEmployee(employee, cancellationToken);
 
             //if (result == null) { //it will never be  null, even if insertion failed.
             //    return BadRequest("Insertion falied");
@@ -67,13 +67,13 @@ namespace ASPCoreWebAPI.Controllers
         }
 
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdateEmployee(int Id, Employee employee) { 
+        public async Task<IActionResult> UpdateEmployee(int Id, Employee employee, CancellationToken cancellationToken) { 
             if(Id != employee.Id)
             {
                 return BadRequest();
             }
 
-            bool IsUpdateComplete = await _employeeRepository.UpdateEmployee(employee);
+            bool IsUpdateComplete = await _employeeRepository.UpdateEmployee(employee, cancellationToken);
 
             if (!IsUpdateComplete) 
             { 
@@ -83,8 +83,8 @@ namespace ASPCoreWebAPI.Controllers
         }
 
         [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeleteEmployee(int Id) { 
-            bool isDeleted = await _employeeRepository.DeleteEmployee(Id);
+        public async Task<IActionResult> DeleteEmployee(int Id, CancellationToken cancellationToken) { 
+            bool isDeleted = await _employeeRepository.DeleteEmployee(Id, cancellationToken);
 
             if (isDeleted)
             {

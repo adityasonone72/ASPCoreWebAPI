@@ -13,7 +13,7 @@ namespace ASPCoreWebAPI.Repository
         {
             _configuration = configuration;
         }
-        public async Task<List<Employee>> GetEmployees()
+        public async Task<List<Employee>> GetEmployees(CancellationToken cancellationToken)
         {
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString()); //using keyword gaurantees that Dispose() will be called even if sql connection failed!! So, the database can be accissible for others also.
             using SqlCommand sqlData = new SqlCommand("Select * FROM EmployeeInfo", sqlConnection); //sqlDataAdapter don't provide us async methods
@@ -21,13 +21,15 @@ namespace ASPCoreWebAPI.Repository
             //DataTable dt = new DataTable();
             //sqlData.Fill(dt);
 
-           await sqlConnection.OpenAsync();
+           await sqlConnection.OpenAsync(cancellationToken);
 
             List<Employee> empList = new List<Employee>();
 
-            using SqlDataReader reader = await sqlData.ExecuteReaderAsync();
+            using SqlDataReader reader = await sqlData.ExecuteReaderAsync(cancellationToken);
 
-            while(await reader.ReadAsync())
+            //Datatable: Loads all rows into the memory and then started looping
+            //ExecuteReader : If get one row then process, 2nd row then process. 
+            while(await reader.ReadAsync(cancellationToken))
             {
                 Employee emp = new Employee();
                 emp.Id = Convert.ToInt32(reader["Id"]);
@@ -39,17 +41,17 @@ namespace ASPCoreWebAPI.Repository
             }
             return empList;
         }
-        public async Task<Employee?> GetEmployeeById(int id) {
+        public async Task<Employee?> GetEmployeeById(int id, CancellationToken cancellationToken) {
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
             
-            await sqlConnection.OpenAsync();
+            await sqlConnection.OpenAsync(cancellationToken);
             using SqlCommand sqlCommand = new SqlCommand("Select * FROM EmployeeInfo where Id = @Id",sqlConnection);
 
             sqlCommand.Parameters.AddWithValue("@Id", id);
-            using SqlDataReader reader = await sqlCommand.ExecuteReaderAsync();
+            using SqlDataReader reader = await sqlCommand.ExecuteReaderAsync(cancellationToken);
             
 
-            if(await reader.ReadAsync()) //instead of while, we have used if here. In while we know that we might get 0 or 100 rows, but here since we are finding by primary key, we either get 0 or 1.
+            if(await reader.ReadAsync(cancellationToken)) //instead of while, we have used if here. In while we know that we might get 0 or 100 rows, but here since we are finding by primary key, we either get 0 or 1.
             {
                 Employee emp = new Employee();
                 emp.Id = Convert.ToInt32(reader["Id"]);
@@ -61,24 +63,24 @@ namespace ASPCoreWebAPI.Repository
             return null;
         }
 
-        public async Task<Employee> AddEmployee(Employee emp) {
+        public async Task<Employee> AddEmployee(Employee emp, CancellationToken cancellationToken) {
             // using keyword dispose the connection if any exception is occured while CRUD.
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
             using SqlCommand sqlCommand = new SqlCommand("Insert into EmployeeInfo(Name,Age,Salary) VALUES(@Name,@Age,@Salary); SELECT SCOPE_IDENTITY();", sqlConnection);
 
-            await sqlConnection.OpenAsync();
+            await sqlConnection.OpenAsync(cancellationToken);
 
             sqlCommand.Parameters.AddWithValue("@Name", emp.Name);
             //sqlCommand.Parameters.AddWithValue("@Age", emp.Age); //AddWithValue guesses datatype automatically. Might fail in some cases, that's why using Add is a best practice.
             sqlCommand.Parameters.Add("@Age", SqlDbType.Int).Value = emp.Age;
             sqlCommand.Parameters.AddWithValue("@Salary", emp.Salary);
 
-            int generatedId = Convert.ToInt32(await sqlCommand.ExecuteScalarAsync());
+            int generatedId = Convert.ToInt32(await sqlCommand.ExecuteScalarAsync(cancellationToken));
             emp.Id = generatedId;
             return emp;
         }
 
-        public async Task<bool> UpdateEmployee(Employee emp) {
+        public async Task<bool> UpdateEmployee(Employee emp, CancellationToken cancellationToken) {
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
             using SqlCommand sqlCommand = new SqlCommand("UPDATE EmployeeInfo SET Name = @Name, Age = @Age, Salary = @Salary WHERE Id = @Id", sqlConnection); 
 
@@ -87,22 +89,22 @@ namespace ASPCoreWebAPI.Repository
             sqlCommand.Parameters.Add("@Salary", SqlDbType.Decimal).Value = emp.Salary;
             sqlCommand.Parameters.Add("@Id", SqlDbType.Int).Value = emp.Id;
 
-            await sqlConnection.OpenAsync();
+            await sqlConnection.OpenAsync(cancellationToken);
 
-            int rowAffected = await sqlCommand.ExecuteNonQueryAsync();
+            int rowAffected = await sqlCommand.ExecuteNonQueryAsync(cancellationToken);
 
             return rowAffected == 1;
         }
 
-        public async Task<bool> DeleteEmployee(int Id) {
+        public async Task<bool> DeleteEmployee(int Id, CancellationToken cancellationToken) {
             using SqlConnection sqlConnection = new SqlConnection(_configuration.GetConnectionString("EmployeeCon").ToString());
             using SqlCommand sqlCommand = new SqlCommand("DELETE FROM EmployeeInfo WHERE Id = @Id", sqlConnection);
 
             sqlCommand.Parameters.Add("@Id", SqlDbType.Int).Value = Id;
 
-            await sqlConnection.OpenAsync();
+            await sqlConnection.OpenAsync(cancellationToken);
 
-            int rowAffected = await sqlCommand.ExecuteNonQueryAsync();
+            int rowAffected = await sqlCommand.ExecuteNonQueryAsync(cancellationToken);
 
             return rowAffected == 1;
         }
