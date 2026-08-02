@@ -1,4 +1,5 @@
-﻿using ASPCoreWebAPI.Models;
+﻿using ASPCoreWebAPI.DTOs;
+using ASPCoreWebAPI.Models;
 using ASPCoreWebAPI.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json; //it is no longer needed, as we are not using Json.Serialize, Ok() uses System.Text.Json for serialization
@@ -53,25 +54,56 @@ namespace ASPCoreWebAPI.Controllers
             return Ok(result);
         }
         [HttpPost]
-        public async Task<ActionResult<Employee>> AddEmployee(Employee employee, CancellationToken cancellationToken)
+        public async Task<ActionResult<Employee>> AddEmployee(CreateEmployeeDto dto, CancellationToken cancellationToken)
         {
-            var result = await _employeeRepository.AddEmployee(employee, cancellationToken);
+            //var result = await _employeeRepository.AddEmployee(employee, cancellationToken);
 
-            //if (result == null) { //it will never be  null, even if insertion failed.
-            //    return BadRequest("Insertion falied");
-            //}
-            //else
-            //{
-                return Ok(result);
-            //}
+            ////if (result == null) { //it will never be  null, even if insertion failed.
+            ////    return BadRequest("Insertion falied");
+            ////}
+            ////else
+            ////{
+            //    return Ok(result);
+            ////}
+            ///
+            Employee employee = new Employee
+            {
+                Name = dto.Name,
+                Age = dto.Age,
+                Salary = dto.Salary
+            };
+
+            Employee result = await _employeeRepository.AddEmployee(employee,cancellationToken);
+
+            EmployeeDto response = new EmployeeDto
+            {
+                Id = result.Id,
+                Name = result.Name,
+                Age = result.Age,
+                Salary = result.Salary
+            };
+
+            //return Ok(response); //successful POST operation should return 201 Created, so we use CreatedAtAction which will route to GetEmpById and return newly created ID
+            return CreatedAtAction(
+                nameof(GetEmployeeById),
+                new { id = response.Id },
+            response);
         }
 
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdateEmployee(int Id, Employee employee, CancellationToken cancellationToken) { 
-            if(Id != employee.Id)
+        public async Task<IActionResult> UpdateEmployee(int Id, UpdateEmployeeDto dto, CancellationToken cancellationToken) {
+            Employee employee = new Employee
             {
-                return BadRequest();
-            }
+                Id = Id,
+                Name = dto.Name,
+                Age = dto.Age,
+                Salary = dto.Salary
+            };
+
+            //if (Id != employee.Id) // this check is invalid if we are using DTOs, now they are impossilbe to differ. Also UpdateDto don't contain Id, so client can't send multiple Ids (Only in URL not in Request body)
+            //{
+            //    return BadRequest();
+            //}
 
             bool IsUpdateComplete = await _employeeRepository.UpdateEmployee(employee, cancellationToken);
 

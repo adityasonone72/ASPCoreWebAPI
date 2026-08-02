@@ -22,8 +22,13 @@ Version 5 - Production Ready API
 ├── CancellationToken ✔
 
 Version 6
-├── Swagger Documentation
-├── Validation
+├── Data Annotation [Required], [StringLength], [Range], [EmailAddress], [Phone], [RegularExpression] DTOs ✔
+├── Manual Mapping instead of Auto Mapping ✔
+├── Swagger / OpenAPI
+├── ModelState
+├── Auto  Mapper
+├── FluentValidation
+├── API Documentation
 
 Version 7
 ├── Entity Framework Core

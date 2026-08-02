@@ -35,7 +35,7 @@ namespace ASPCoreWebAPI.Repository
                 emp.Id = Convert.ToInt32(reader["Id"]);
                 emp.Name = Convert.ToString(reader["Name"]);
                 emp.Age = Convert.ToInt32(reader["Age"]);
-                emp.Salary = Convert.ToDecimal(reader["Salary"]);
+                emp.Salary = Convert.ToDouble(reader["Salary"]);
 
                 empList.Add(emp);
             }
@@ -57,7 +57,7 @@ namespace ASPCoreWebAPI.Repository
                 emp.Id = Convert.ToInt32(reader["Id"]);
                 emp.Name = Convert.ToString(reader["Name"]);
                 emp.Age = Convert.ToInt32(reader["Age"]);
-                emp.Salary = Convert.ToDecimal(reader["Salary"]);
+                emp.Salary = Convert.ToDouble(reader["Salary"]);
                 return emp;
             }
             return null;
