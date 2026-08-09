@@ -25,7 +25,6 @@ Version 6
 ├── Data Annotation [Required], [StringLength], [Range], [EmailAddress], [Phone], [RegularExpression] DTOs ✔
 ├── Manual Mapping instead of Auto Mapping ✔
 ├── Swagger / OpenAPI
-├── ModelState
 ├── Auto  Mapper
 ├── FluentValidation
 ├── API Documentation
