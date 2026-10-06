@@ -83,7 +83,7 @@ namespace ASPCoreWebAPI.Controllers
                 Salary = result.Salary
             };
 
-            //return Ok(response); //successful POST operation should return 201 Created, so we use CreatedAtAction which will route to GetEmpById and return newly created ID
+            //return Ok(response); //successful POST operation should return 201 Created, and we removed 200 OK, so we use CreatedAtAction which will route to GetEmpById and return newly created ID
             return CreatedAtAction(
                 nameof(GetEmployeeById),
                 new { id = response.Id },
